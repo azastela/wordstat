@@ -1,3 +1,4 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  post :word_counter, to: 'stats#word_counter'
+  get :word_statistics, to: 'stats#word_statistics'
 end
