@@ -10,22 +10,21 @@ class StatsService
   end
 
   def perform
-    case input
-    when String
+    if input.respond_to?(:path)
+      File.open(input.path).each(IO_SEPARATOR, MEGABYTE) do |chunk|
+        count_words(chunk)
+      end
+    else
       uri = URI.parse(input) rescue nil
-      # expect that remote url response with plain/text
+      # expect that remote url response is plain/text
       if uri && %w(http https).include?(uri.scheme)
         response = HTTParty.get(uri)
         count_words(response)
       else
         count_words(input)
       end
-    when ActionDispatch::Http::UploadedFile
-      File.open(input.path).each(IO_SEPARATOR, MEGABYTE) do |chunk|
-        count_words(chunk)
-      end
-    else
     end
+
     stat.save!
   end
 
